@@ -3,8 +3,8 @@ from __future__ import annotations
 from pydantic_core import core_schema as _core_schema
 from typing_extensions import Literal
 
-from pydantic._internal import _decorators
-from pydantic._internal._internal_dataclass import slots_dataclass
+from ._internal import _decorators
+from ._internal._internal_dataclass import slots_dataclass
 
 
 @slots_dataclass

@@ -16,8 +16,7 @@ from annotated_types import BaseMetadata, GroupedMetadata
 from pydantic_core import SchemaError, SchemaValidator, core_schema
 from typing_extensions import Annotated, Final, Literal, TypedDict, get_args, get_origin, is_typeddict
 
-from pydantic.annotated_arguments import AfterValidator, BeforeValidator, PlainSerializer, WrapSerializer, WrapValidator
-
+from ..annotated_arguments import AfterValidator, BeforeValidator, PlainSerializer, WrapSerializer, WrapValidator
 from ..errors import PydanticSchemaGenerationError, PydanticUndefinedAnnotation, PydanticUserError
 from ..fields import FieldInfo
 from ..json_schema import JsonSchemaValue, update_json_schema
@@ -202,7 +201,7 @@ class GenerateSchema:
         """
         Generate schema for a pydantic model.
         """
-        from pydantic.main import BaseModel
+        from ..main import BaseModel
 
         model_ref = get_type_ref(cls)
         cached_def = self.recursion_cache.get(model_ref)

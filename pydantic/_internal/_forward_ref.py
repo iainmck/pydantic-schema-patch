@@ -9,8 +9,8 @@ from typing_extensions import Literal, TypedDict
 from ._typing_extra import TypeVarType
 
 if TYPE_CHECKING:
-    from pydantic import BaseModel
-    from pydantic._internal._dataclasses import PydanticDataclass
+    from .. import BaseModel
+    from ._dataclasses import PydanticDataclass
 
 
 class DeferredClassGetitem(TypedDict):
