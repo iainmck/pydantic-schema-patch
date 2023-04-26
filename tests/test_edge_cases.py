@@ -2366,3 +2366,45 @@ def test_generic_wrapped_forwardref():
     assert exc_info.value.errors() == [
         {'input': 1, 'loc': ('callbacks', 0), 'msg': 'Input should be a valid dictionary', 'type': 'dict_type'}
     ]
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='cannot parametrize types before 3.9')
+@pytest.mark.parametrize(
+    ('sequence_type', 'expected_error_type', 'expected_error_msg'),
+    [
+        pytest.param(list, 'list_type', 'Input should be a valid list'),
+        pytest.param(Sequence, 'sequence_str_str_type', 'Strings are not allowed as a Sequence value'),
+    ],
+)
+def test_sequences_str(sequence_type, expected_error_type, expected_error_msg):
+    str_sequence_analyzer: AnalyzedType[sequence_type[str]] = AnalyzedType(sequence_type[str])
+
+    class Model(BaseModel):
+        str_sequence: sequence_type[str]
+
+    assert str_sequence_analyzer.validate_python(['1', 'bc']) == ['1', 'bc']
+    assert Model(str_sequence=['1', 'bc']).str_sequence == ['1', 'bc']
+
+    with pytest.raises(ValidationError) as e:
+        str_sequence_analyzer.validate_python('1bc')
+
+    assert e.value.errors() == [
+        {
+            'type': expected_error_type,
+            'input': '1bc',
+            'loc': (),
+            'msg': expected_error_msg,
+        }
+    ]
+
+    with pytest.raises(ValidationError) as e:
+        Model(str_sequence='1bc')
+
+    assert e.value.errors() == [
+        {
+            'type': expected_error_type,
+            'input': '1bc',
+            'loc': ('str_sequence',),
+            'msg': expected_error_msg,
+        }
+    ]

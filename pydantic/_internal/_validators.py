@@ -60,21 +60,12 @@ def sequence_validator(
     value_type = type(__input_value)
     v_list = validator(__input_value)
 
+    if issubclass(value_type, (str, bytes)):
+        raise PydanticCustomError('sequence_str_str_type', 'Strings are not allowed as a Sequence value')
+
     # the rest of the logic is just re-creating the original type from `v_list`
     if value_type == list:
         return v_list
-    elif issubclass(value_type, str):
-        try:
-            return ''.join(v_list)
-        except TypeError:
-            # can happen if you pass a string like '123' to `Sequence[int]`
-            raise PydanticKnownError('string_type')
-    elif issubclass(value_type, bytes):
-        try:
-            return b''.join(v_list)
-        except TypeError:
-            # can happen if you pass a string like '123' to `Sequence[int]`
-            raise PydanticKnownError('bytes_type')
     elif issubclass(value_type, range):
         # return the list as we probably can't re-create the range
         return v_list
