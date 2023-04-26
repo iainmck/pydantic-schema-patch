@@ -66,7 +66,6 @@ ENCODERS_BY_TYPE: Dict[Type[Any], Callable[[Any], Any]] = {
     SecretStr: str,
     set: list,
     UUID: str,
-    'Sentinel': lambda o: isoformat, 
 }
 
 
@@ -89,7 +88,10 @@ def pydantic_encoder(obj: Any) -> Any:
             continue
         return encoder(obj)
     else:  # We have exited the for loop without finding a suitable encoder
-        raise TypeError(f"Object of type '{obj.__class__.__name__}' is not JSON serializable")
+        if obj.__class__.__name__ == 'Sentinel':
+            return 'datetime'
+        return obj.__class__.__name__
+        #raise TypeError(f"Object of type '{obj.__class__.__name__}' is not JSON serializable")
 
 
 def custom_pydantic_encoder(type_encoders: Dict[Any, Callable[[Type[Any]], Any]], obj: Any) -> Any:
