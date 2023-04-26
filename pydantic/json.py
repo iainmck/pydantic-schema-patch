@@ -66,6 +66,7 @@ ENCODERS_BY_TYPE: Dict[Type[Any], Callable[[Any], Any]] = {
     SecretStr: str,
     set: list,
     UUID: str,
+    'Sentinel': lambda o: isoformat, 
 }
 
 
@@ -82,6 +83,7 @@ def pydantic_encoder(obj: Any) -> Any:
     # Check the class type and its superclasses for a matching encoder
     for base in obj.__class__.__mro__[:-1]:
         try:
+            print(base)
             encoder = ENCODERS_BY_TYPE[base]
         except KeyError:
             continue
